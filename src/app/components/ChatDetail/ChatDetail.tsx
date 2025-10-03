@@ -1,16 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, Send } from "lucide-react";
 
+import { Contact } from "../../types/contact";
+
 type Message = {
   id: string | number;
   sender: string;
   text: string;
 };
 
-type Contact = {
-  avatar: string;
-  name: string;
-};
+
 
 type ChatDetailProps = {
   contact: Contact;

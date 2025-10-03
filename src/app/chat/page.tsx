@@ -2,15 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ChatList from "../components/ChatList/ChatList";
+import { Contact } from "../types/contact";
 
-// Tipagem do contato
-type Contact = {
-  id: string;
-  name: string;
-  message: string;
-  time: string;
-  avatar: string;
-};
 
 const contacts: Contact[] = [
   {
@@ -36,7 +29,7 @@ const contacts: Contact[] = [
   },
 ];
 
-export default function Home() {
+export default function Chat() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
 

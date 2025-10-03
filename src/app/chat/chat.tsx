@@ -4,24 +4,8 @@ import { useState, useEffect } from "react";
 // Make sure the path is correct and the file exists; adjust if necessary:
 import ChatDetail from "../components/ChatDetail/ChatDetail";
 
-// Lista de contatos simulada
-const contacts = [
-  {
-    id: "1",
-    name: "Kawsar Ahmed",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-  {
-    id: "2",
-    name: "Mahbuba",
-    avatar: "https://randomuser.me/api/portraits/women/45.jpg",
-  },
-  {
-    id: "3",
-    name: "Lucas Silva",
-    avatar: "https://randomuser.me/api/portraits/men/14.jpg",
-  },
-];
+import { Contact } from "../types/contact";
+
 
 export default function ChatDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -32,7 +16,7 @@ export default function ChatDetailPage({ params }: { params: { id: string } }) {
   // Busca o contato e mensagens iniciais ao carregar a página
   useEffect(() => {
     if (id) {
-      const foundContact = contacts.find((c) => c.id === id);
+      const foundContact = contact.find((c: Contact) => c.id === id);
       setContact(foundContact);
 
       // Mensagens iniciais baseadas no contato

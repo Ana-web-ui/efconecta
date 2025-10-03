@@ -1,13 +1,6 @@
 import { Search } from "lucide-react";
+import { Contact } from "../../types/contact";
 
-// Tipagem dos props para melhor autocompletar e validação
-type Contact = {
-  id: string | number;
-  avatar: string;
-  name: string;
-  message: string;
-  time: string;
-};
 
 type ChatListProps = {
   contacts: Contact[];
