@@ -1,80 +1,95 @@
-import React from "react";
- import Header from "../components/Header/Header";
+"use client";
+import { useState } from "react";
+import { useSwipeable } from "react-swipeable";
 import Cards from "../components/Cards/Cards";
-export default function feed() {
-  return (
-    <div
-      style={{
-        background: "#fff",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "40px 0",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 1100,
-          padding: 32,
-          background: "#fff",
-          borderRadius: 16,
-          boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
-        }}
-      >
-        {/* Header */}
-        <Header />
+import Header from "../components/Header/Header";
+import MobileNav from "../MobileNav/MobileNav";
 
-        {/* Lembretes */}
-        <div style={{ marginBottom: 40 }}>
-          <div style={{ fontWeight: 600, marginBottom: 16, fontSize: 18 }}>
-            Lembretes
-          </div>
-          <div
-            style={{
-              display: "flex",
-              gap: 16,
-              flexWrap: "wrap",
-            }}
-          >
-            <Reminder color="#b7d89c" text="Aula na turma ABC" />
-            <Reminder color="#5fd1e7" text="Aula na turma EFG" />
-            <Reminder color="#ff7b7b" text="Aula na turma HIJ" />
-            <Reminder color="#c9a1d7" text="Aula na turma KLM" />
-          </div>
-        </div>
+type Reminder = { id: number; text: string; color: string };
+type ReminderItemProps = {
+reminder: Reminder;
+onDelete: (id: number) => void;
+onDetails: (text: string) => void;
+};
 
-        {/* Turmas */}
-        <Cards />
-        
-      </div>
-    </div>
-  );
+function ReminderItem({ reminder, onDelete, onDetails }: ReminderItemProps) {
+const [translateX, setTranslateX] = useState(0);
+const [removing, setRemoving] = useState(false);
+const handlers = useSwipeable({
+onSwiping: (e) => setTranslateX(e.deltaX),
+onSwipedLeft: () => {
+setTranslateX(-300);
+setTimeout(() => {
+setTranslateX(0);
+onDetails(reminder.text);
+}, 300);
+},
+onSwipedRight: () => {
+setTranslateX(300);
+setRemoving(true);
+setTimeout(() => onDelete(reminder.id), 300);
+},
+preventScrollOnSwipe: true,
+trackMouse: true,
+});
+
+return (
+<div
+{...handlers}
+style={{
+background: reminder.color,
+borderRadius: 12,
+padding: "12px 16px",
+fontWeight: 600,
+color: "#222",
+display: "flex",
+alignItems: "center",
+justifyContent: "space-between",
+cursor: "grab",
+userSelect: "none",
+transform: "translateX(${translateX}px)",
+transition: removing ? "transform .3s ease, opacity .3s ease" : "transform .3s ease",
+opacity: removing ? 0 : 1,
+boxShadow: "0 1px 4px rgba(0,0,0,.05)",
+}}
+>
+<span>{reminder.text}</span>
+<span style={{ fontSize: 20 }}>→</span>
+</div>
+);
 }
 
-function Reminder({ color, text }: { color: string; text: string }) {
-  return (
-    <div
-      style={{
-        background: color,
-        borderRadius: 8,
-        padding: "12px 28px 12px 16px",
-        fontWeight: 500,
-        fontSize: 16,
-        color: "#222",
-        minWidth: 180,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-        cursor: "pointer",
-      }}
-    >
-      {text}
-      <span style={{ fontSize: 22, marginLeft: 12 }}>➔</span>
-    </div>
-  );
+export default function FeedPage() {
+const [reminders, setReminders] = useState<Reminder[]>([
+{ id: 1, text: "Aula na turma ABC", color: "#9BD06B" },
+{ id: 2, text: "Aula na turma DEF", color: "#54E3F3" },
+{ id: 3, text: "Aula na turma JKL", color: "#F26C6C" },
+{ id: 4, text: "Aula na turma MNO", color: "#C6A2C8" },
+]);
+
+const handleDelete = (id: number) => setReminders((prev) => prev.filter((r) => r.id !== id));
+const handleDetails = (text: string) => console.log("Detalhes do lembrete:", text);
+
+return (
+<div style={{ maxWidth: 1100, margin: "0 auto", padding: 24, paddingBottom: 110 }}>
+<Header />
+
+<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+<section>
+<h3 style={{ margin: "8px 0 12px 0" }}>Lembretes</h3>
+<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+{reminders.map((r) => (
+<ReminderItem key={r.id} reminder={r} onDelete={handleDelete} onDetails={handleDetails} />
+))}
+</div>
+</section>
+
+<section>
+<Cards />
+</section>
+</div>
+
+<MobileNav />
+</div>
+);
 }
-
-

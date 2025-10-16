@@ -5,10 +5,9 @@ import Feed from "./feed/page";
 import Chamada from "./chamada/page";
 export default function Home() {
   return (
-<>
-    <Login />
-    <Feed />
-    <Chamada />
+<> <Login />
+<Feed/>
+<Chamada />
 </>
   );
 }

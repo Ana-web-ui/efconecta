@@ -1,20 +1,23 @@
+"use client";
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, Send } from "lucide-react";
 
-import { Contact } from "../../types/contact";
-
-type Message = {
-  id: string | number;
-  sender: string;
-  text: string;
+type Contact = {
+  id: string;
+  name: string;
+  avatar: string;
 };
 
-
+type Message = {
+  id: string;
+  text: string;
+  sender: "me" | "other";
+};
 
 type ChatDetailProps = {
   contact: Contact;
   messages: Message[];
-  onSendMessage: (msg: string) => void;
+  onSendMessage: (text: string) => void;
   onBack: () => void;
 };
 
@@ -24,181 +27,75 @@ export default function ChatDetail({
   onSendMessage,
   onBack,
 }: ChatDetailProps) {
-  const [input, setInput] = useState("");
+  const [inputText, setInputText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
+  // Faz o scroll automático para o final da conversa
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSend = () => {
-    if (input.trim() === "") return;
-    onSendMessage(input);
-    setInput("");
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+    if (inputText.trim() === "") return;
+    onSendMessage(inputText);
+    setInputText("");
   };
 
   return (
-    <div className="chat-detail">
-      {/* Header */}
-      <div className="header">
-        <button className="back-button" onClick={onBack}>
+    <div className="flex flex-col h-screen bg-gray-50">
+      {/* Cabeçalho */}
+      <div className="flex items-center gap-3 p-4 bg-white shadow-md">
+        <button onClick={onBack}>
           <ArrowLeft size={24} />
         </button>
-        <img src={contact.avatar} alt={contact.name} className="avatar" />
-        <div>
-          <div className="header-name">{contact.name}</div>
-          <div className="header-status">Online</div>
-        </div>
+        <img
+          src={contact.avatar}
+          alt={contact.name}
+          className="w-10 h-10 rounded-full"
+        />
+        <h2 className="font-semibold text-lg">{contact.name}</h2>
       </div>
 
-      {/* Mensagens */}
-      <div className="messages-container">
-        {messages.map((message) => {
-          const isMe = message.sender === "me";
-          return (
+      {/* Área de mensagens */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`flex ${
+              msg.sender === "me" ? "justify-end" : "justify-start"
+            }`}
+          >
             <div
-              key={message.id}
-              className={`message ${isMe ? "my-message" : "other-message"}`}
+              className={`px-4 py-2 rounded-2xl max-w-xs ${
+                msg.sender === "me"
+                  ? "bg-blue-500 text-white rounded-br-none"
+                  : "bg-gray-200 text-gray-800 rounded-bl-none"
+              }`}
             >
-              {message.text}
+              {msg.text}
             </div>
-          );
-        })}
+          </div>
+        ))}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="input-container">
+      {/* Campo de digitação */}
+      <div className="flex items-center p-3 bg-white shadow-inner">
         <input
-          className="input"
           type="text"
-          placeholder="Digite sua mensagem..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyPress}
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          placeholder="Digite uma mensagem..."
+          className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
-        <button className="send-button" onClick={handleSend}>
-          <Send size={20} color="#fff" />
+        <button
+          onClick={handleSend}
+          className="ml-2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition"
+        >
+          <Send size={20} />
         </button>
       </div>
-
-      <style jsx>{`
-        .chat-detail {
-          display: flex;
-          flex-direction: column;
-          height: 100vh;
-        }
-
-        .header {
-          display: flex;
-          align-items: center;
-          padding: 15px;
-          border-bottom: 1px solid #eee;
-          background: #fff;
-          position: sticky;
-          top: 0;
-          z-index: 10;
-        }
-
-        .back-button {
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 5px;
-          margin-right: 10px;
-        }
-
-        .avatar {
-          width: 40px;
-          height: 40px;
-          border-radius: 20px;
-          margin-right: 10px;
-          object-fit: cover;
-        }
-
-        .header-name {
-          font-weight: bold;
-          font-size: 16px;
-        }
-
-        .header-status {
-          font-size: 12px;
-          color: green;
-        }
-
-        .messages-container {
-          flex: 1;
-          padding: 15px;
-          overflow-y: auto;
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-        }
-
-        .message {
-          padding: 10px 15px;
-          border-radius: 15px;
-          max-width: 75%;
-          word-wrap: break-word;
-        }
-
-        .my-message {
-          background-color: #6c63ff;
-          color: white;
-          align-self: flex-end;
-        }
-
-        .other-message {
-          background-color: #f1f1f1;
-          color: #000;
-          align-self: flex-start;
-        }
-
-        .input-container {
-          display: flex;
-          align-items: center;
-          padding: 10px;
-          border-top: 1px solid #eee;
-          background: #fff;
-        }
-
-        .input {
-          flex: 1;
-          background-color: #f2f2f2;
-          border-radius: 25px;
-          padding: 12px 15px;
-          margin-right: 10px;
-          border: none;
-          outline: none;
-          font-size: 14px;
-        }
-
-        .send-button {
-          background-color: #6c63ff;
-          border: none;
-          border-radius: 25px;
-          padding: 12px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .send-button:hover {
-          background-color: #5a52d5;
-        }
-      `}</style>
     </div>
   );
 }
