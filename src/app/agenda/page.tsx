@@ -1,5 +1,4 @@
 "use client";
-
 import { useMemo, useState } from "react";
 import Header from "../components/Header/Header";
 import MobileNav from "../MobileNav/MobileNav";
@@ -9,12 +8,11 @@ type Activity = {
   turma: string;
   title: string;
   description: string;
-  dueDate: string; // YYYY-MM-DD
+  dueDate: string;
 };
 
 const TURMAS = ["Turma ABC", "Turma DEF", "Turma JKL"];
 
-// Utils de datas
 function startOfMonth(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
 }
@@ -133,8 +131,7 @@ export default function AgendaPage() {
   const activitiesOfTurma = activities.filter((a) => a.turma === turma);
 
   return (
-    <div
-      style={{
+<><div style={{
         maxWidth: 1200,
         margin: "0 auto",
         padding: 24,
@@ -332,7 +329,6 @@ export default function AgendaPage() {
           </div>
         </section>
 
-        {/* Formulário de nova atividade */}
         <section>
           <h3 style={{ margin: "0 0 10px" }}>Adicionar uma nova atividade:</h3>
 
@@ -348,7 +344,7 @@ export default function AgendaPage() {
               gap: 14,
             }}
           >
-            {/* Turma da atividade */}
+
             <label style={{ display: "grid", gap: 6 }}>
               <span style={{ fontSize: 13, fontWeight: 700, opacity: 0.8 }}>
                 Turma
@@ -372,7 +368,6 @@ export default function AgendaPage() {
               </select>
             </label>
 
-            {/* Título */}
             <label style={{ display: "grid", gap: 6 }}>
               <span style={{ fontSize: 13, fontWeight: 700, opacity: 0.8 }}>
                 Título
@@ -385,7 +380,6 @@ export default function AgendaPage() {
               />
             </label>
 
-            {/* Descrição */}
             <label style={{ display: "grid", gap: 6 }}>
               <span style={{ fontSize: 13, fontWeight: 700, opacity: 0.8 }}>
                 Descrição
@@ -399,7 +393,7 @@ export default function AgendaPage() {
               />
             </label>
 
-            {/* Data de entrega */}
+
             <label style={{ display: "grid", gap: 6 }}>
               <span style={{ fontSize: 13, fontWeight: 700, opacity: 0.8 }}>
                 Data de entrega
@@ -440,6 +434,7 @@ export default function AgendaPage() {
 
       <MobileNav />
     </div>
+</>
   );
 }
 
