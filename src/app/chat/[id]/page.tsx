@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { ArrowLeft, Send } from "lucide-react";
+
 
 export default function ChatPage() {
   const [messages, setMessages] = useState([
